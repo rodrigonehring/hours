@@ -1,9 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 import parseTime from '../utils/parseTime'
+import validTime from '../utils/validTime'
 
 const Input = styled.input`
   padding: 10px;
+  ${props => !props.valid && 'color: red'}
 `
 /**
  * 1 = 01:00
@@ -23,6 +25,7 @@ const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 export default class InputTime extends React.Component {
   state = {
     value: this.props.value || '',
+    valid: true,
   }
 
   handleChange = e => {
@@ -36,8 +39,11 @@ export default class InputTime extends React.Component {
 
   handleBlur = () => {
     const currentValue = this.state.value
+    const value = parseTime(currentValue)
+    const valid = validTime(value)
     this.setState({
-      value: parseTime(currentValue),
+      value,
+      valid,
     })
   }
 
@@ -57,37 +63,14 @@ export default class InputTime extends React.Component {
       event.preventDefault()
       return
     }
-    
-
-    // if (isNumber || isSeparator) {
-    //   // se for maior que o máximo não faz nada!
-    //   // if (index === 5) {
-    //   //   console.warn('cancelado, max')
-    //   //   event.preventDefault()
-    //   //   return
-    //   // }
-
-    //   // é número
-    //   if (isNumber) {
-    //     console.warn('number')
-    //     return
-    //   }
-
-    //   // // é separator e não existe ainda
-    //   // if (isSeparator && !haveSeparator && index !== 0) {
-    //   //   console.warn('separator', currentValue)
-    //   //   this.setState({ value: `${currentValue}:` })
-    //   //   // return
-    //   // }
-    // }
-    // event.preventDefault()
   }
 
   render() {
-    const { value } = this.state
+    const { value, valid } = this.state
 
     return (
       <Input
+        valid={valid}
         type="text"
         value={value}
         onChange={this.handleChange}
